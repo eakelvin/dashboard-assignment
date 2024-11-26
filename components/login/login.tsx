@@ -28,11 +28,17 @@ const Login = () => {
             const response = await axios.post(
                 `${process.env.BASE_URL}/auth/login/`,
                 data
-            )
+            );
+            if (response.data.status === true) {
+                const { access, refresh } = response.data.data
+                if (access) {
+                    localStorage.setItem("token", access)
+                }
+            };
             toast.success("Login Successfully, Redirecting...")
-            console.log(response.data)
-            replace('/')
-        } catch (error) {
+            // console.log(response.data)
+            replace('/dashboard')
+        } catch (error: any) {
             console.log(error);
             toast.error("An Error occured. Please try again")
         } finally {
