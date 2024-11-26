@@ -7,21 +7,34 @@ import Image from 'next/image'
 import forest from '@/assets/images/fore.avif'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { EyeOff, Eye } from 'lucide-react'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import Spinner from '../ui/spinner'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
+    const { replace } = useRouter()
 
     const {
         register, handleSubmit, watch, reset, formState: { errors }
     } = useForm<Auth>();
+    const monitor = watch()
 
-    const onSubmit: SubmitHandler<Auth> = (data) => {
-        setLoading(true)
+    const onSubmit: SubmitHandler<Auth> = async (data) => {
         try {
-            console.log(data)
+            setLoading(true)
+            const response = await axios.post(
+                `${process.env.BASE_URL}/auth/login/`,
+                data
+            )
+            toast.success("Login Successfully, Redirecting...")
+            console.log(response.data)
+            replace('/')
         } catch (error) {
             console.log(error);
+            toast.error("An Error occured. Please try again")
         } finally {
             setLoading(false)
             reset()
@@ -109,8 +122,12 @@ const Login = () => {
                             </div>
 
                             <div className="">
-                                <Button className='w-full bg-gradient-to-r from-lime-950 to-lime-400 rounded-full'>
-                                    Login
+                                <Button
+                                    type='submit'
+                                    className='w-full bg-gradient-to-r from-lime-950 to-lime-400 rounded-full'
+                                    disabled={!(monitor.email && monitor.password)}
+                                >
+                                    {loading ? <Spinner /> : "Login"}
                                 </Button>
                             </div>
                         </form>
