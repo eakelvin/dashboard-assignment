@@ -46,15 +46,15 @@ const Sidebar = () => {
                         className="mr-5 font-extrabold lg:hidden"
                         onClick={toggleSidebar}
                     />
-                    <div className="lg:ml-[260px]">
-                        <p className="font-bold text-2xl">Sales Admin</p>
+                    <div className="lg:ml-[200px]">
+                        <p className="font-bold text-3xl">Sales Admin</p>
                     </div>
                 </div>
             </div>
 
             <div
                 id="sidebar"
-                className={`lg:left-0 ${sidebarVisible ? "left-0" : "-left-72"} fixed top-0 h-dvh w-[250px] bg-lime-950 text-white shadow-lg duration-500 z-[99] p-2 px-5 `}
+                className={`lg:left-0 ${sidebarVisible ? "left-0" : "-left-72"} fixed top-0 h-dvh w-[200px] bg-lime-950 text-white shadow-lg duration-500 z-[99] p-2 px-5 `}
             >
                 <div className="lg:hidden flex justify-end" onClick={toggleSidebar}>
                     <X />

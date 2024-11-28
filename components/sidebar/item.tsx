@@ -48,7 +48,7 @@ const SidebarItem = ({ item }: { item: SideBarItem }) => {
     return (
         <>
             <Link
-                className={`flex items-center justify-between duration-75 px-1 py-2 hover:bg-lime-400 rounded-lg cursor-pointer hover:text-white ${isActive && "border-l-2 border-lime-400 -ml-2 pl-3 text-lime-400"}`}
+                className={`flex items-center justify-between duration-75 px-1 py-2 hover:bg-lime-400 cursor-pointer hover:text-white ${isActive && "border-l-2 border-lime-400 -ml-2 pl-3 text-lime-400"}`}
                 onClick={onClick}
                 href={path}
             >

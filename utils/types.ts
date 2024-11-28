@@ -5,41 +5,45 @@ export type Auth = {
 };
 
 export type Summary = {
-    update: {
-        percentage_change: number;
-        date: Date;
-    },
-    net_income: {
-        amount: number;
-        currency: string;
-        percentage_change: number;
-    },
-    total_return: {
-        amount: number;
-        currency: string;
-        percentage_change: number;
-    },
-    sales_report: {
-        product_launched: number;
-        ongoing_product: number;
-        product_sold: number;
-    },
-    revenue: {
-        amount: number;
-        currency: string;
-        percentage_change: number;
-        break_down: {
-            week: number,
-            revenue: number,
-            expense: number
-        }[];
-    },
-    total_view_perfomance: {
-        view_count: number;
-        sales: number;
-        percentage: number;
-        total_count: number;
+    data: {
+        update: {
+            percentage_change: string;
+            date: string;
+        },
+        net_income: {
+            amount: string;
+            currency: string;
+            percentage_change: string;
+        },
+        total_return: {
+            amount: string;
+            currency: string;
+            percentage_change: string;
+        },
+        sales_report: {
+            product_launched: string;
+            ongoing_product: string;
+            product_sold: string;
+        },
+        revenue: {
+            amount: string;
+            currency: string;
+            percentage_change: string;
+            break_down: {
+                week: string,
+                revenue: string,
+                expense: string
+            }[];
+        },
+        total_view_perfomance: {
+            view_count: string;
+            sales: string;
+            percentage: string;
+            total_count: string;
+        }
     }
+    // message: string
+    // status: boolean
 };
 
 interface UserProfile {
