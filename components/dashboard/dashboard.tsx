@@ -2,6 +2,7 @@
 import { getReports } from '@/utils/api'
 import { redirect, useRouter } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 
 const Dashboard = () => {
     const { replace } = useRouter()
@@ -12,6 +13,7 @@ const Dashboard = () => {
     useEffect(() => {
         const savedToken = localStorage.getItem("token")
         if (!savedToken) {
+            toast.error("Please Login")
             replace("/login")
             return
         }
