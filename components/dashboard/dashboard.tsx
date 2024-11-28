@@ -1,16 +1,22 @@
 "use client"
 import { getReports } from '@/utils/api'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 
 const Dashboard = () => {
-    const token = localStorage.getItem("token")
+    const { replace } = useRouter()
+    const [token, setToken] = useState<string | null>(null);
     const [report, setReport] = useState<Summary | null>(null)
     const [loading, setLoading] = useState(true)
 
-    if (!token) {
-        redirect("/login")
-    }
+    useEffect(() => {
+        const savedToken = localStorage.getItem("token")
+        if (!savedToken) {
+            replace("/login")
+            return
+        }
+        setToken(savedToken)
+    }, [replace])
 
     useEffect(() => {
         const refreshReports = async () => {
@@ -28,7 +34,9 @@ const Dashboard = () => {
 
     return (
         <div>
+            <h1 className='text-3xl mb-4'>Home Page</h1>
             Dashiinnining
+            {/* <div>Your token is: {token}</div> */}
         </div>
     )
 }
