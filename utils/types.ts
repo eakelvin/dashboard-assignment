@@ -1,10 +1,10 @@
-type Auth = {
+export type Auth = {
     email: string;
     password: string;
     remember?: boolean;
 };
 
-type Summary = {
+export type Summary = {
     update: {
         percentage_change: number;
         date: Date;
@@ -42,4 +42,20 @@ type Summary = {
     }
 };
 
-  
+interface UserProfile {
+    id: string;
+    first_name: string;
+    last_name: string;
+    user_name: string;
+    gender: "Male" | "Female" | "Other";
+    date_of_birth: string;
+    picture: string;
+    customer_id: string;
+};
+
+export interface User {
+    id: string;
+    email: string;
+    phone_number: string;
+    profile: UserProfile;
+};

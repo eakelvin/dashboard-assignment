@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Summary, User } from "./types";
 
 export const getReports = async (
     token: string | null
@@ -17,3 +18,21 @@ export const getReports = async (
         return error
     }
 };
+
+// export const getUser = async (
+//     token: string | null, id: string | null
+// ): Promise<User> => {
+//     try {
+//         const { data } = await axios.get(
+//             `${process.env.BASE_URL}/user/{id}`, 
+//             {
+//                 headers: {
+//                     Authorization: `Bearer ${token}`
+//                 }
+//             }
+//         )
+//         return data;
+//     } catch (error:any) {
+//         return error
+//     }
+// };

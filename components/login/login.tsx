@@ -11,6 +11,7 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import Spinner from '../ui/spinner'
+import { Auth } from '@/utils/types'
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
@@ -31,12 +32,13 @@ const Login = () => {
             );
             if (response.data.status === true) {
                 const { access, refresh } = response.data.data
-                if (access) {
+                if (access && refresh) {
                     localStorage.setItem("token", access)
+                    localStorage.setItem("refresh", refresh)
                 }
             };
             toast.success("Login Successfully, Redirecting...")
-            // console.log(response.data)
+            console.log(response.data)
             replace('/dashboard')
         } catch (error: any) {
             console.log(error);
