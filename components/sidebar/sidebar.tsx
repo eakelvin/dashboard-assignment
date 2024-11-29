@@ -6,6 +6,7 @@ import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { general, items } from "@/utils/data";
 import { Menu, X } from "lucide-react";
+import Drop from "../dashboard/drop";
 
 const Sidebar = () => {
     const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -43,11 +44,11 @@ const Sidebar = () => {
                 <div className="flex items-center">
                     <Menu
                         size={24}
-                        className="mr-5 font-extrabold lg:hidden"
+                        className="mr-5 font-extrabold lg:hidden cursor-pointer"
                         onClick={toggleSidebar}
                     />
                     <div className="lg:ml-[200px]">
-                        <p className="font-bold text-3xl">Sales Admin</p>
+                        <Drop />
                     </div>
                 </div>
             </div>
@@ -57,7 +58,7 @@ const Sidebar = () => {
                 className={`lg:left-0 ${sidebarVisible ? "left-0" : "-left-72"} fixed top-0 h-dvh w-[200px] bg-lime-950 text-white shadow-lg duration-500 z-[99] p-2 px-5 `}
             >
                 <div className="lg:hidden flex justify-end" onClick={toggleSidebar}>
-                    <X />
+                    <X className="cursor-pointer" />
                 </div>
                 <div className="flex flex-col justify-between h-full w-full">
                     <div className="flex flex-col gap-y-4">
