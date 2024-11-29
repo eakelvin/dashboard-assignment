@@ -22,51 +22,16 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Label, Pie, PieChart } from "recharts";
+import { CartesianGrid, Label, LabelList, Pie, PieChart, XAxis, YAxis } from "recharts";
 import { Bar, BarChart } from "recharts"
 import { DatePickerWithRange } from './datepicker'
-
-const revenueConfig = {
-    revenue: {
-        label: "Income",
-        color: "#052e16",
-    },
-    expense: {
-        label: "Expenses",
-        color: "#a3e635",
-    },
-} satisfies ChartConfig
+import { performanceConfig, revenueConfig, salesConfig } from '@/utils/data'
 
 const Dashboard = () => {
     const { replace } = useRouter()
     const [token, setToken] = useState<string | null>(null)
-    const [id, setId] = useState<string | null>(null)
     const [report, setReport] = useState<Summary | null>(null)
-    const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
-
-    const chartConfig = {
-        visitors: {
-            label: "Visitors",
-        },
-        other: {
-            label: "Other",
-            color: "hsl(var(--chart-5))",
-        },
-    } satisfies ChartConfig;
-
-    const exchangeRateVsFuelData = [
-        {
-            label: "Exchange Rate Companies",
-            number: 40,
-            fill: "hsl(var(--chart-1))",
-        },
-        {
-            label: "Fuel Stations",
-            number: 60,
-            fill: "hsl(var(--chart-2))",
-        },
-    ];
 
     useEffect(() => {
         const savedToken = localStorage.getItem("token")
@@ -98,6 +63,39 @@ const Dashboard = () => {
 
         refreshReports()
     }, [token])
+
+    const chartData = [
+        {
+            label: report?.data.total_view_perfomance.percentage,
+            number: parseFloat((report?.data.total_view_perfomance.percentage ?? "0").replace("%", "")),
+            fill: "var(--color-view)",
+        },
+        {
+            label: report?.data.total_view_perfomance.sales,
+            number: parseFloat((report?.data.total_view_perfomance.sales ?? "0").replace("%", "")),
+            fill: "var(--color-sales)",
+        },
+        {
+            label: report?.data.total_view_perfomance.view_count,
+            number: parseFloat((report?.data.total_view_perfomance.sales ?? "0").replace("%", "")),
+            fill: "var(--color-count)",
+        },
+    ];
+
+    const salesData = [
+        {
+            report: "Products Launched",
+            sales: report?.data.sales_report.product_launched
+        },
+        {
+            report: "Ongoing Products",
+            sales: report?.data.sales_report.ongoing_product
+        },
+        {
+            report: "Products Sold",
+            sales: report?.data.sales_report.product_sold
+        },
+    ];
 
     useEffect(() => {
         console.log('Updated R:', report);
@@ -197,7 +195,59 @@ const Dashboard = () => {
                                     <CardTitle className='align-text-top'>...</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <p>Card Content</p>
+                                    <ChartContainer config={salesConfig}>
+                                        <BarChart
+                                            accessibilityLayer
+                                            data={salesData}
+                                            layout="vertical"
+                                            margin={{
+                                                right: 16,
+                                            }}
+                                        >
+                                            <CartesianGrid horizontal={false} />
+                                            <YAxis
+                                                dataKey="report"
+                                                type="category"
+                                                tickLine={false}
+                                                tickMargin={10}
+                                                axisLine={false}
+                                                tickFormatter={(value) => value.slice(0, 3)}
+                                                hide
+                                            />
+                                            <XAxis
+                                                dataKey="sales"
+                                                type="number"
+                                                tickLine={false}
+                                                tickMargin={10}
+                                                axisLine={false}
+                                            />
+                                            <ChartTooltip
+                                                cursor={false}
+                                                content={<ChartTooltipContent indicator="line" />}
+                                            />
+                                            <Bar
+                                                dataKey="sales"
+                                                layout="vertical"
+                                                fill="var(--color-desktop)"
+                                                radius={4}
+                                            >
+                                                <LabelList
+                                                    dataKey="report"
+                                                    position="insideLeft"
+                                                    offset={8}
+                                                    className="fill-black"
+                                                    fontSize={12}
+                                                />
+                                                <LabelList
+                                                    dataKey="sales"
+                                                    position="right"
+                                                    offset={8}
+                                                    className="fill-foreground"
+                                                    fontSize={12}
+                                                />
+                                            </Bar>
+                                        </BarChart>
+                                    </ChartContainer>
                                 </CardContent>
                             </Card>
 
@@ -249,16 +299,16 @@ const Dashboard = () => {
                         </CardHeader>
                         <CardContent>
                             <ChartContainer
-                                config={chartConfig}
+                                config={performanceConfig}
                                 className="mx-auto aspect-square max-h-[250px]"
                             >
                                 <PieChart>
                                     <ChartTooltip
                                         cursor={false}
-                                        content={<ChartTooltipContent hideLabel />}
+                                        content={<ChartTooltipContent />}
                                     />
                                     <Pie
-                                        data={exchangeRateVsFuelData}
+                                        data={chartData}
                                         dataKey="number"
                                         nameKey="label"
                                         innerRadius={60}
@@ -297,24 +347,24 @@ const Dashboard = () => {
                                 </PieChart>
                             </ChartContainer>
 
-                            <CardDescription className='mb-2'>
+                            <CardDescription className='mb-2 text-center'>
                                 Here are some tips on how to improve your score
                             </CardDescription>
                             <Button className='w-full' variant={'outline'}>
                                 Guide Views
                             </Button>
                         </CardContent>
-                        <CardFooter className='p-1 border-t border-gray-200 flex items-center gap-2'>
+                        <CardFooter className='p-5 border-t border-gray-200 flex items-center justify-between gap-2'>
                             <div className='!text-[12px] flex flex-row items-center gap-1'>
                                 <div className="w-2 h-2 rounded-sm bg-lime-400" />
                                 View Count
                             </div>
                             <div className='!text-[12px] flex items-center gap-1'>
-                                <div className="w-2 h-2 rounded-sm bg-green-800" />
+                                <div className="w-2 h-2 rounded-sm bg-green-700" />
                                 Percentage
                             </div>
                             <div className='!text-[12px] flex flex-row items-center gap-1'>
-                                <div className="w-2 h-2 rounded-sm bg-lime-400" />
+                                <div className="w-2 h-2 rounded-sm bg-orange-500" />
                                 Sales
                             </div>
                         </CardFooter>
