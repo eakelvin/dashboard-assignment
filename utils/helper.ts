@@ -11,7 +11,7 @@ export function convertDate(date:any) {
     
 };
 
-export function dateFormat(date: any): string {
+export function dateFormat(date: any) {
     const newDate = new Date(date);
 
     const year = newDate.getFullYear();
@@ -20,4 +20,10 @@ export function dateFormat(date: any): string {
 
     const formattedDate = `${year}-${month}-${day}`;
     return formattedDate;
-}
+};
+
+export function formatNumber(value:any) {
+    const number = typeof value === 'string' ? parseInt(value, 10) : value;
+    const formattedNumber = number.toLocaleString();
+    return formattedNumber
+};
