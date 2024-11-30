@@ -26,6 +26,7 @@ import { CartesianGrid, Label, LabelList, Pie, PieChart, XAxis, YAxis } from "re
 import { Bar, BarChart } from "recharts"
 import { DatePickerWithRange } from './datepicker'
 import { performanceConfig, revenueConfig, salesConfig } from '@/utils/data'
+import { Skeleton } from '../ui/skeleton'
 
 const Dashboard = () => {
     const { replace } = useRouter()
@@ -46,6 +47,7 @@ const Dashboard = () => {
     useEffect(() => {
         const refreshReports = async () => {
             try {
+                setLoading(true)
                 const response = await axios.get(
                     `${process.env.BASE_URL}/report/summary/`,
                     {
@@ -58,6 +60,8 @@ const Dashboard = () => {
                 setReport(response.data)
             } catch (error: any) {
                 console.log(error);
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -97,10 +101,6 @@ const Dashboard = () => {
         },
     ];
 
-    useEffect(() => {
-        console.log('Updated R:', report);
-    }, [report])
-
     return (
         <div className='border-t-2 border-gray-200'>
             <div className='grid lg:grid-cols-10 h-screen'>
@@ -115,178 +115,203 @@ const Dashboard = () => {
                     </div>
 
                     <div>
-                        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-5'>
-                            <Card className='bg-lime-950 text-white'>
-                                <CardHeader>
-                                    <CardTitle className='flex items-center gap-1'>
-                                        <div className="w-4 h-4 rounded-full bg-red-700" />
-                                        Update
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className='text-xs text-muted-foreground'>
-                                        {convertDate(report?.data.update.date)}
-                                    </p>
-                                    <CardTitle className="text-lg">
-                                        Sales revenue increase {''}
-                                        <span className='text-lime-400'>{report?.data.update.percentage_change}</span>
-                                        {''} in 1 week
-                                    </CardTitle>
-                                </CardContent>
-                                <CardFooter>
-                                    <Link href={'/statistics'} className="flex items-center gap-2 text-xs text-muted-foreground">
-                                        See Statistics
-                                        <ChevronRight />
-                                    </Link>
-                                </CardFooter>
-                            </Card>
+                        {loading ? (
+                            <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-5'>
+                                {[...Array(5)].map((_, idx) => (
+                                    <Card className="" key={idx}>
+                                        <CardHeader>
+                                            <CardTitle>
+                                                <Skeleton className="h-4 w-[200px]" />
+                                            </CardTitle>
+                                            <CardDescription>
+                                                <Skeleton className="h-4 w-[200px]" />
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="flex justify-center">
+                                            <Skeleton className="h-12 w-12 rounded-full" />
+                                        </CardContent>
+                                        <CardFooter>
+                                            <Skeleton className="h-4 w-[200px]" />
+                                        </CardFooter>
+                                    </Card>
+                                ))}
+                            </div>
+                        ) : (
+                            <>
+                                <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-5'>
+                                    <Card className='bg-lime-950 text-white'>
+                                        <CardHeader>
+                                            <CardTitle className='flex items-center gap-1'>
+                                                <div className="w-4 h-4 rounded-full bg-red-700" />
+                                                Update
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className='text-xs text-muted-foreground'>
+                                                {convertDate(report?.data.update.date)}
+                                            </p>
+                                            <CardTitle className="text-lg">
+                                                Sales revenue increase {''}
+                                                <span className='text-lime-400'>{report?.data.update.percentage_change}</span>
+                                                {''} in 1 week
+                                            </CardTitle>
+                                        </CardContent>
+                                        <CardFooter>
+                                            <Link href={'/statistics'} className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                See Statistics
+                                                <ChevronRight />
+                                            </Link>
+                                        </CardFooter>
+                                    </Card>
 
-                            <Card>
-                                <CardHeader className='flex flex-row justify-between'>
-                                    <CardTitle>Net Income</CardTitle>
-                                    <CardTitle>...</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <CardTitle className='text-sm'>
-                                        {report?.data.net_income.currency}
-                                    </CardTitle>
-                                    <CardTitle className="text-5xl text-center">
-                                        <span className=''>
-                                            {report?.data.net_income.amount}
-                                        </span>
-                                    </CardTitle>
-                                </CardContent>
-                                <CardFooter>
-                                    <p className='font-bold text-sm text-green-400 flex items-center gap-2'>
-                                        <TrendingUp />
-                                        {report?.data.net_income.percentage_change} from last month
-                                    </p>
-                                </CardFooter>
-                            </Card>
+                                    <Card>
+                                        <CardHeader className='flex flex-row justify-between'>
+                                            <CardTitle>Net Income</CardTitle>
+                                            <CardTitle>...</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <CardTitle className='text-sm'>
+                                                {report?.data.net_income.currency}
+                                            </CardTitle>
+                                            <CardTitle className="text-5xl text-center">
+                                                <span className=''>
+                                                    {report?.data.net_income.amount}
+                                                </span>
+                                            </CardTitle>
+                                        </CardContent>
+                                        <CardFooter>
+                                            <p className='font-bold text-sm text-green-400 flex items-center gap-2'>
+                                                <TrendingUp />
+                                                {report?.data.net_income.percentage_change} from last month
+                                            </p>
+                                        </CardFooter>
+                                    </Card>
 
-                            <Card className=''>
-                                <CardHeader className='flex flex-row items-center justify-between'>
-                                    <CardTitle>Total Return</CardTitle>
-                                    <CardTitle className=''>...</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <CardTitle className='text-sm'>
-                                        {report?.data.total_return.currency}
-                                    </CardTitle>
-                                    <CardTitle className="text-5xl text-center">
-                                        {report?.data.total_return.amount}
-                                    </CardTitle>
-                                </CardContent>
-                                <CardFooter className=''>
-                                    <p className='font-bold text-sm text-red-400 flex items-center gap-2'>
-                                        <TrendingDown />
-                                        {report?.data.total_return.percentage_change} from last month
-                                    </p>
-                                </CardFooter>
-                            </Card>
-                        </div>
+                                    <Card className=''>
+                                        <CardHeader className='flex flex-row items-center justify-between'>
+                                            <CardTitle>Total Return</CardTitle>
+                                            <CardTitle className=''>...</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <CardTitle className='text-sm'>
+                                                {report?.data.total_return.currency}
+                                            </CardTitle>
+                                            <CardTitle className="text-5xl text-center">
+                                                {report?.data.total_return.amount}
+                                            </CardTitle>
+                                        </CardContent>
+                                        <CardFooter className=''>
+                                            <p className='font-bold text-sm text-red-400 flex items-center gap-2'>
+                                                <TrendingDown />
+                                                {report?.data.total_return.percentage_change} from last month
+                                            </p>
+                                        </CardFooter>
+                                    </Card>
+                                </div>
 
-                        <div className='my-8' />
+                                <div className='my-8' />
 
-                        <div className='grid lg:grid-cols-2 gap-5'>
-                            <Card className=''>
-                                <CardHeader className='flex flex-row items-center justify-between'>
-                                    <CardTitle>Sales Report</CardTitle>
-                                    <CardTitle className='align-text-top'>...</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <ChartContainer config={salesConfig}>
-                                        <BarChart
-                                            accessibilityLayer
-                                            data={salesData}
-                                            layout="vertical"
-                                            margin={{
-                                                right: 16,
-                                            }}
-                                        >
-                                            <CartesianGrid horizontal={false} />
-                                            <YAxis
-                                                dataKey="report"
-                                                type="category"
-                                                tickLine={false}
-                                                tickMargin={10}
-                                                axisLine={false}
-                                                tickFormatter={(value) => value.slice(0, 3)}
-                                                hide
-                                            />
-                                            <XAxis
-                                                dataKey="sales"
-                                                type="number"
-                                                tickLine={false}
-                                                tickMargin={10}
-                                                axisLine={false}
-                                            />
-                                            <ChartTooltip
-                                                cursor={false}
-                                                content={<ChartTooltipContent indicator="line" />}
-                                            />
-                                            <Bar
-                                                dataKey="sales"
-                                                layout="vertical"
-                                                fill="var(--color-desktop)"
-                                                radius={4}
-                                            >
-                                                <LabelList
-                                                    dataKey="report"
-                                                    position="insideLeft"
-                                                    offset={8}
-                                                    className="fill-black"
-                                                    fontSize={12}
-                                                />
-                                                <LabelList
-                                                    dataKey="sales"
-                                                    position="right"
-                                                    offset={8}
-                                                    className="fill-foreground"
-                                                    fontSize={12}
-                                                />
-                                            </Bar>
-                                        </BarChart>
-                                    </ChartContainer>
-                                </CardContent>
-                            </Card>
+                                <div className='grid lg:grid-cols-2 gap-5'>
+                                    <Card className=''>
+                                        <CardHeader className='flex flex-row items-center justify-between'>
+                                            <CardTitle>Sales Report</CardTitle>
+                                            <CardTitle className='align-text-top'>...</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <ChartContainer config={salesConfig}>
+                                                <BarChart
+                                                    accessibilityLayer
+                                                    data={salesData}
+                                                    layout="vertical"
+                                                    margin={{
+                                                        right: 16,
+                                                    }}
+                                                >
+                                                    <CartesianGrid horizontal={false} />
+                                                    <YAxis
+                                                        dataKey="report"
+                                                        type="category"
+                                                        tickLine={false}
+                                                        tickMargin={10}
+                                                        axisLine={false}
+                                                        tickFormatter={(value) => value.slice(0, 3)}
+                                                        hide
+                                                    />
+                                                    <XAxis
+                                                        dataKey="sales"
+                                                        type="number"
+                                                        tickLine={false}
+                                                        tickMargin={10}
+                                                        axisLine={false}
+                                                    />
+                                                    <ChartTooltip
+                                                        cursor={false}
+                                                        content={<ChartTooltipContent indicator="line" />}
+                                                    />
+                                                    <Bar
+                                                        dataKey="sales"
+                                                        layout="vertical"
+                                                        fill="var(--color-desktop)"
+                                                        radius={4}
+                                                    >
+                                                        <LabelList
+                                                            dataKey="report"
+                                                            position="insideLeft"
+                                                            offset={8}
+                                                            className="fill-black"
+                                                            fontSize={12}
+                                                        />
+                                                        <LabelList
+                                                            dataKey="sales"
+                                                            position="right"
+                                                            offset={8}
+                                                            className="fill-foreground"
+                                                            fontSize={12}
+                                                        />
+                                                    </Bar>
+                                                </BarChart>
+                                            </ChartContainer>
+                                        </CardContent>
+                                    </Card>
 
-                            <Card className=''>
-                                <CardHeader className='flex flex-row items-center justify-between border-b'>
-                                    <CardTitle>Revenue</CardTitle>
-                                    <div className='flex items-center gap-2'>
-                                        <CardTitle className='!text-sm font-normal flex items-center gap-1'>
-                                            <div className="w-4 h-4 rounded-sm bg-green-950" />
-                                            Income
-                                        </CardTitle>
-                                        <CardTitle className='font-normal !text-sm flex flex-row items-center gap-1'>
-                                            <div className="w-4 h-4 rounded-sm bg-lime-400" />
-                                            Expenses
-                                        </CardTitle>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <CardTitle className="my-3 font-normal text-sm flex gap-1">
-                                        <span>{report?.data.revenue.currency}</span>
-                                        {' '}
-                                        <span className='text-4xl font-bold text-center'>
-                                            {report?.data.revenue.amount}
-                                        </span>{' '}
-                                        <span className='text-green-400 flex items-end gap-1'>
-                                            <TrendingUp />
-                                            {report?.data.revenue.percentage_change}
-                                        </span>{' '}
-                                        <span className='flex items-end'>from last month</span>
-                                    </CardTitle>
-                                    <ChartContainer config={revenueConfig} className="h-full w-full">
-                                        <BarChart accessibilityLayer data={report?.data.revenue.break_down}>
-                                            <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
-                                            <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
-                                        </BarChart>
-                                    </ChartContainer>
-                                </CardContent>
-                            </Card>
-                        </div>
+                                    <Card className=''>
+                                        <CardHeader className='flex flex-row items-center justify-between border-b'>
+                                            <CardTitle>Revenue</CardTitle>
+                                            <div className='flex items-center gap-2'>
+                                                <CardTitle className='!text-sm font-normal flex items-center gap-1'>
+                                                    <div className="w-4 h-4 rounded-sm bg-green-950" />
+                                                    Income
+                                                </CardTitle>
+                                                <CardTitle className='font-normal !text-sm flex flex-row items-center gap-1'>
+                                                    <div className="w-4 h-4 rounded-sm bg-lime-400" />
+                                                    Expenses
+                                                </CardTitle>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <CardTitle className="my-3 font-normal text-sm flex gap-1">
+                                                <span>{report?.data.revenue.currency}</span>
+                                                {' '}
+                                                <span className='text-4xl font-bold text-center'>
+                                                    {report?.data.revenue.amount}
+                                                </span>{' '}
+                                                <span className='text-green-400 flex items-end gap-1'>
+                                                    <TrendingUp />
+                                                    {report?.data.revenue.percentage_change}
+                                                </span>{' '}
+                                                <span className='flex items-end'>from last month</span>
+                                            </CardTitle>
+                                            <ChartContainer config={revenueConfig} className="h-full w-full">
+                                                <BarChart accessibilityLayer data={report?.data.revenue.break_down}>
+                                                    <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
+                                                    <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
+                                                </BarChart>
+                                            </ChartContainer>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -391,108 +416,6 @@ const Dashboard = () => {
                     </Card>
                 </div>
             </div>
-
-
-            {/* <div className='grid grid-cols-5 min-h-screen h-full'>
-                <div className='min-[1220px]:col-span-4 col-span-full h-screen grid grid-cols-3 gap-4'>
-                    <Card className=''>
-                        <CardHeader className="pb-2">
-                            <p className='text-xs'>
-                                Update
-                            </p>
-                            <CardDescription className='mt-2'>
-                                
-                            </CardDescription>
-                            
-                        </CardHeader>
-                        <CardContent className=''>
-                           
-                        </CardContent>
-                    </Card>
-
-                    <Card className='rounded-2xl'>
-                        <CardHeader className="pb-2">
-                            <div className='flex justify-between items-center'>
-                                <CardDescription>Net Income</CardDescription>
-                                <CardDescription className='font-bold text-xl text-black'>
-                                    ...
-                                </CardDescription>
-                            </div>
-                            
-                        </CardHeader>
-                        <CardContent>
-                           
-                        </CardContent>
-                    </Card>
-
-                    <Card className='rounded-2xl'>
-                        <CardHeader className="pb-2">
-                            <div className='flex justify-between items-center'>
-                                <CardDescription>Total Return</CardDescription>
-                                <CardDescription className='font-bold text-xl text-black'>
-                                    ...
-                                </CardDescription>
-                            </div>
-                            
-                        </CardHeader>
-                        <CardContent>
-                            
-                        </CardContent>
-                    </Card>
-
-                    <Card className='w-full rounded-2xl'>
-                        <CardHeader className="flex flex-row justify-between">
-                            <CardTitle className="">
-                                Sales Report
-                            </CardTitle>
-                            <CardDescription>...</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-
-                        </CardContent>
-                    </Card>
-
-                    <Card className='w-full rounded-2xl'>
-                        <CardHeader className="">
-                            <div className='flex justify-between items-center'>
-                                <CardDescription>Revenue</CardDescription>
-                                <CardDescription className='flex items-center gap-2'>
-                                    <div>Income</div>
-                                    <div>Expenses</div>
-                                </CardDescription>
-                            </div>
-                            
-                        </CardHeader>
-                        <CardContent>
-                           
-
-                        </CardContent>
-                    </Card>
-                </div>
-                <div className='min-h-screen h-full min-[1220px]:block col-span-1'>
-                    <Card className="">
-                        <CardHeader className="items-center pb-0">
-                            
-                        </CardHeader>
-                        <CardContent className="flex-1 pb-0 border-t-2">
-                            
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader className="flex flex-row justify-between">
-                            
-                        </CardHeader>
-                        <CardContent>
-                            
-                        </CardContent>
-                        <CardFooter>
-                            
-                        </CardFooter>
-                    </Card>
-                </div>
-            </div> */}
-
         </div>
     )
 }

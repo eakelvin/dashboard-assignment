@@ -93,7 +93,7 @@ const Sidebar = () => {
                                 </Avatar>
                                 <div>
                                     <p className="text-sm font-semibold -mt-0.5">
-                                        firstname lastname
+                                        Name
                                     </p>
                                     <p className="text-sm">email@gmail.com</p>
                                 </div>
