@@ -135,7 +135,7 @@ const Login = () => {
                                     className='w-full bg-gradient-to-r from-lime-950 to-lime-400 rounded-full'
                                     disabled={!(monitor.email && monitor.password)}
                                 >
-                                    {loading ? <Spinner /> : "Login"}
+                                    {loading ? <Spinner text /> : "Login"}
                                 </Button>
                             </div>
                         </form>
